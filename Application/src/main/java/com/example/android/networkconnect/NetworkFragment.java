@@ -47,6 +47,10 @@ public class NetworkFragment extends Fragment {
     private DownloadTask mDownloadTask;
     private String mUrlString;
 
+    private DoWorkCallback mWorkCallback;
+    private DoWorkTask mWorkTask;
+
+
     /**
      * Static initializer for NetworkFragment that sets the URL of the host it will be downloading
      * from.
@@ -288,5 +292,70 @@ public class NetworkFragment extends Fragment {
             }
             return result;
         }
+    }
+
+
+
+    private class DoWorkTask extends AsyncTask<String, Integer, DoWorkTask.Result> {
+
+        /**
+         * Wrapper class that serves as a union of a result value and an exception. When the
+         * download task has completed, either the result value or exception can be a non-null
+         * value. This allows you to pass exceptions to the UI thread that were thrown during
+         * doInBackground().
+         */
+        class Result {
+            public String mResultValue;
+            public Exception mException;
+            public Result(String resultValue) {
+                mResultValue = resultValue;
+            }
+            public Result(Exception exception) {
+                mException = exception;
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            return;
+        }
+
+
+        /**
+         * Defines work to perform on the background thread.
+         */
+        @Override
+        protected Result doInBackground(String... urls) {
+            Result result = null;
+            result = new Result("foo");
+            return result;
+        }
+
+        /**
+         * Send DoWorkCallback a progress update.
+         */
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            if (values.length >= 2) {
+                mWorkCallback.onProgressUpdate(values[0], values[1]);
+            }
+        }
+
+        /**
+         * Updates the DoWorkCallback with the result.
+         */
+        @Override
+        protected void onPostExecute(Result result) {
+            return;
+        }
+
+        /**
+         * Override to add special behavior for cancelled AsyncTask.
+         */
+        @Override
+        protected void onCancelled(Result result) {
+        }
+
     }
 }

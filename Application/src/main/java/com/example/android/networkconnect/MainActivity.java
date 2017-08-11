@@ -42,6 +42,7 @@ public class MainActivity extends FragmentActivity implements DownloadCallback {
     // as necessary.
     private TextView mDataText;
     private ProgressBar mProgressBar;
+    private int mProgressValue;
 
     // Keep a reference to the NetworkFragment which owns the AsyncTask object
     // that is used to execute network ops.
@@ -58,6 +59,7 @@ public class MainActivity extends FragmentActivity implements DownloadCallback {
         mDataText = (TextView) findViewById(R.id.data_text);
         mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager(), "http://fusor-xcore.cloudapp.net:5555/stubapi/foo?q=10&a=20");
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mProgressValue = 0;
     }
 
     @Override
@@ -78,12 +80,14 @@ public class MainActivity extends FragmentActivity implements DownloadCallback {
             case R.id.clear_action:
                 finishDownloading();
                 mDataText.setText("");
+                mProgressBar.setProgress(0);
                 return true;
 
             // do the background action test
             case R.id.bg_action:
                 Log.i(TAG, "starting background action");
-                mProgressBar.setProgress(40);
+                if (mProgressValue < 100) { mProgressValue = mProgressValue + 10;}
+                mProgressBar.setProgress(mProgressValue);
                 return true;
 
         }
